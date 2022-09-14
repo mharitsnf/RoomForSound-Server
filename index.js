@@ -1,3 +1,4 @@
+// ----- ----- ----- ----- ----- ----- ----- Setup ----- ----- ----- ----- ----- ----- -----
 const express = require('express')
 const bodyParser = require('body-parser')
 const uniqid = require('uniqid')
@@ -10,8 +11,10 @@ app.use(bodyParser.urlencoded({
 
 const port = 3500
 
+// ----- ----- ----- ----- ----- ----- ----- Database ----- ----- ----- ----- ----- ----- -----
+//Volatile database. Will be cleared every time the server restarts
+
 /*
-The volatile database, if you will
 {
     id: an unique id
     name: name of the audience
@@ -19,11 +22,30 @@ The volatile database, if you will
 */
 let audiences = []
 
+/*
+{
+    audienceId: the audience id (who sent the message)
+    message: the message
+}
+Messages will be stored in the array until it is read by Unity. Then it will be removed.
+*/
+let messages = []
+
+/*
+{
+    audienceId: the audience id (who sent the emote)
+    emoteType: type of the emoji
+}
+Emotes will be stored in the array until it is read by Unity. Then it will be removed.
+*/
+let emotes = []
+
+// ----- ----- ----- ----- ----- ----- ----- API ----- ----- ----- ----- ----- ----- -----
+
 // GET "/audiences"
 // Return all audiences
 app.get('/audiences', (req, res) => {
     res.send({
-        message: "OK",
         data: audiences
     })
 })
