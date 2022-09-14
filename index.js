@@ -18,6 +18,7 @@ const port = 3500
 {
     id: an unique id
     name: name of the audience
+    message: message
 }
 */
 let audiences = []
@@ -45,23 +46,37 @@ let emotes = []
 // GET "/audiences"
 // Return all audiences
 app.get('/audiences', (req, res) => {
+    let mergedAudiences = audiences.map(audience => {
+        return {
+            id: audience.id,
+            name: audience.name,
+            messages: messages.filter(message => message.audienceId == audience.id)
+        }
+    })
+
     res.send({
-        data: audiences
+        data: mergedAudiences
     })
 })
 
 // GET "/audiences/:audienceId"
 // Get a single audience
 app.get("/audiences/:audienceId", (req, res) => {
-    let id = req.params.audienceId
+    let audienceId = req.params.audienceId
 
-    const found = audiences.find(audience => audience.id == id)
+    const found = audiences.find(audience => audience.id == audienceId)
 
     let result = {}
-    if (found) result.message = "OK"
-    else result.message = "Not found"
-    
-    result.data = found
+    if (found) {
+        found.messages = messages.filter(message => message.audienceId == audienceId)
+        
+        result.message = "OK"
+        result.data = found
+    }
+    else {
+        result.message = "Not found"
+        result.data = null
+    }
 
     res.send(result)
 })
@@ -71,8 +86,18 @@ app.get("/audiences/:audienceId", (req, res) => {
 // Post a new audience
 // Send data as JSON
 app.post("/audiences", (req, res) => {
+    if (!req.body.name || req.body.name == "") {
+        res
+        .status(400)
+        .send({
+            message: "Name should be specified"
+        })
+            
+        return
+    }
+
     let newAudience = {
-        id: uniqid(),
+        id: uniqid("audience-"),
         name: req.body.name
     }
 
@@ -81,6 +106,58 @@ app.post("/audiences", (req, res) => {
     res.send({
         message: "OK",
         data: newAudience
+    })
+})
+
+
+// POST "/messages"
+// Send new message
+// Send data as JSON
+app.post("/messages", (req, res) => {
+    if (!req.body.audienceId || req.body.audienceId == "") {
+        res
+        .status(400)
+        .send({
+            message: "audienceId is required and cannot be an empty string"
+        })
+            
+        return
+    }
+
+    if (!req.body.message || req.body.message == "") {
+        res
+        .status(400)
+        .send({
+            message: "message is required and cannot be an empty string"
+        })
+            
+        return
+    }
+
+    let audienceId = req.body.audienceId
+    audiences
+
+    let newMessage = {
+        id: uniqid("message-"),
+        audienceId: audienceId,
+        message: req.body.message
+    }
+
+    messages.push(newMessage)
+
+    res.send({
+        message: "OK",
+        data: newMessage
+    })
+})
+
+
+// POST "/messages"
+// Get and delete all messages
+app.get("/messages", (req, res) => {
+    res.send({
+        message: "OK",
+        data: messages
     })
 })
 
