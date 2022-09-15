@@ -2,6 +2,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const uniqid = require('uniqid')
+const _ = require('lodash')
 
 const app = express()
 app.use(bodyParser.json())
@@ -148,6 +149,36 @@ app.post("/messages", (req, res) => {
     res.send({
         message: "OK",
         data: newMessage
+    })
+})
+
+
+app.delete("/messages", (req, res) => {
+    if (!req.query.id || req.query.id == "") {
+        res
+        .status(400)
+        .send({
+            message: "Query id is required"
+        })
+        return
+    }
+
+    let messageToDelete = messages.find(message => message.id == req.query.id)
+    
+    if (!messageToDelete) {
+        res.send({
+            message: "Message not found"
+        })
+        return
+    }
+
+    _.remove(messages, message => {
+        return message.id == req.query.id
+    })
+
+    res.send({
+        message: "OK",
+        data: messageToDelete
     })
 })
 
