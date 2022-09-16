@@ -3,11 +3,15 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const uniqid = require('uniqid')
 const _ = require('lodash')
+const cors = require('cors')
 
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
     extended: true
+}))
+app.use(cors({
+    origin: "*"
 }))
 
 const port = 3500
@@ -131,6 +135,10 @@ app.delete("/audiences", (req, res) => {
 
     _.remove(audiences, audience => {
         return audience.id == req.query.id
+    })
+
+    _.remove(messages, message => {
+        return message.audienceId == req.query.id
     })
 
     res.send({
