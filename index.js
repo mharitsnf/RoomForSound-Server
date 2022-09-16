@@ -110,6 +110,35 @@ app.post("/audiences", (req, res) => {
     })
 })
 
+app.delete("/audiences", (req, res) => {
+    if (!req.query.id || req.query.id == "") {
+        res.send({
+            message: "Query id is required"
+        })
+
+        return
+    }
+
+    let audienceToDelete = audiences.find(audience => audience.id == req.query.id)
+
+    if (!audienceToDelete) {
+        res.send({
+            message: "Audience not found"
+        })
+
+        return
+    }
+
+    _.remove(audiences, audience => {
+        return audience.id == req.query.id
+    })
+
+    res.send({
+        message: "OK",
+        data: audienceToDelete
+    })
+})
+
 
 // POST "/messages"
 // Send new message
