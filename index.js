@@ -115,36 +115,45 @@ app.post("/audiences", (req, res) => {
 })
 
 app.delete("/audiences", (req, res) => {
-    if (!req.query.id || req.query.id == "") {
+    if (!req.query.id) {
+        audiences = []
+        messages = []
+
         res.send({
-            message: "Query id is required"
+            message: "OK",
+            data: {
+                audiences: audiences,
+                messages: messages
+            }
         })
 
         return
     }
-
-    let audienceToDelete = audiences.find(audience => audience.id == req.query.id)
-
-    if (!audienceToDelete) {
-        res.send({
-            message: "Audience not found"
+    else {
+        let audienceToDelete = audiences.find(audience => audience.id == req.query.id)
+    
+        if (!audienceToDelete) {
+            res.send({
+                message: "Audience not found"
+            })
+    
+            return
+        }
+    
+        _.remove(audiences, audience => {
+            return audience.id == req.query.id
         })
-
-        return
+    
+        _.remove(messages, message => {
+            return message.audienceId == req.query.id
+        })
+    
+        res.send({
+            message: "OK",
+            data: audienceToDelete
+        })
     }
 
-    _.remove(audiences, audience => {
-        return audience.id == req.query.id
-    })
-
-    _.remove(messages, message => {
-        return message.audienceId == req.query.id
-    })
-
-    res.send({
-        message: "OK",
-        data: audienceToDelete
-    })
 })
 
 
