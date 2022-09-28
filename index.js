@@ -249,6 +249,14 @@ app.get("/messages", (req, res) => {
     })
 })
 
+app.get("/error", (req, res) => {
+    res
+    .status(400)
+    .send({
+        message: "Error testing"
+    })
+})
+
 
 app.listen(process.env.PORT || port, () => {
     console.log(`Example app listening on port ${port}`)
