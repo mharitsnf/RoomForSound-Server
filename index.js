@@ -171,6 +171,17 @@ app.post("/messages", (req, res) => {
         return
     }
 
+    let audience = audiences.find(audience => audience.id == req.body.audienceId)
+
+    if (!audience) {
+        res
+        .status(404)
+        .send({
+            message: "Audience not found!"
+        })
+        return
+    }
+
     if (!req.body.message || req.body.message == "") {
         res
         .status(400)
