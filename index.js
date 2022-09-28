@@ -79,7 +79,7 @@ app.get("/audiences/:audienceId", (req, res) => {
         result.data = found
     }
     else {
-        result.message = "Not found"
+        result.message = "Audience not found"
         result.data = null
     }
 
@@ -95,7 +95,7 @@ app.post("/audiences", (req, res) => {
         res
         .status(400)
         .send({
-            message: "Name should be specified"
+            message: "Name cannot be empty!"
         })
             
         return
@@ -177,7 +177,7 @@ app.post("/messages", (req, res) => {
         res
         .status(404)
         .send({
-            message: "Audience not found!"
+            message: "Audience not found! Redirecting to home page."
         })
         return
     }
@@ -186,7 +186,7 @@ app.post("/messages", (req, res) => {
         res
         .status(400)
         .send({
-            message: "message is required and cannot be an empty string"
+            message: "Message cannot be an empty!"
         })
             
         return
