@@ -3,7 +3,10 @@ const bodyParser = require("body-parser")
 const uniqid = require("uniqid")
 const _ = require("lodash")
 const cors = require("cors")
-const { audiences, messages } = require("./database/index")
+
+// Database
+let audiences = []
+let messages = []
 
 const createServer = () => {
 
