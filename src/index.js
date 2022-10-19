@@ -1,9 +1,13 @@
 // ----- ----- ----- ----- ----- ----- ----- Setup ----- ----- ----- ----- ----- ----- -----
 const { createServer } = require("./server")
+const { createWebSocketServer } = require("./websocket")
 const port = 3500
 
-const expressApp = createServer()
-
-expressApp.listen(process.env.PORT || port, () => {
+// Express
+let expressApp = createServer()
+let expressServer = expressApp.listen(process.env.PORT || port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+
+// Websocket
+createWebSocketServer(expressServer)
