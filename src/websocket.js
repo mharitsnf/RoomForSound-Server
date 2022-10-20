@@ -1,22 +1,46 @@
-const websocket = require("ws")
+const handler = require("./handler")
+const { Server } = require("socket.io")
 
-let wss
+let io
 
 const createWebSocketServer = (server) => {
-    wss = new websocket.Server({ server })
+    io = new Server(server, {
+        cors: {
+            origin: "*"
+        }
+    })
 
-    wss.on("connection", ws => {
-        ws.on("message", (message, isBinary) => {
-            let msg = isBinary ? message : JSON.parse(message.toString())
-            console.log(msg)
-            ws.send(JSON.stringify({ message: "hello" }))
+    io.on('connection', (socket) => {
+
+        console.log("Connection opened")
+
+        socket.on("disconnect", () => {
+            console.log("Disconnected")
+            socket.emit("message", { message: "bye client!" })
+        })
+
+        socket.on("message", msg => {
+            console.log("Message from client: ", msg)
+        })
+
+        socket.on("serverConnect", msg => {
+            console.log("ServerConnect event: ", msg)
+            handler.onConnect(socket, msg.connectionId)
+        })
+
+        socket.on("serverDisconnect", msg => {
+            console.log("ServerDisconnect event: ", msg)
+        })
+
+        socket.on("offer", msg => {
+            console.log("Offer event: ", msg)
         })
     })
-    
-    return wss
+
+    return io
 }
 
 module.exports = {
-    getServer: wss,
+    getServer: io,
     createWebSocketServer: createWebSocketServer
 }
