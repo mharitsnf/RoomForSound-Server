@@ -4,18 +4,20 @@ const { Server } = require("socket.io")
 
 let ws
 
-const createWebSocketServer = (server) => {
+const createWebSocketServer = (server, mode) => {
 
     ws = new WebSocketServer({ server })
 
+    handler.reset(mode)
+
     ws.on("connection", (socket) => {
-        handler.addClient(socket)
+        handler.add(socket)
 
         console.log("Client connected")
         socket.send(JSON.stringify({ message: "Hello from server! "}))
 
         socket.on("close", () => {
-            handler.removeClient(socket)
+            handler.remove(socket)
             console.log("Client disconnected")
             socket.send(JSON.stringify({ message: "Goodbye from server! "}))
         })
@@ -28,20 +30,19 @@ const createWebSocketServer = (server) => {
 
             switch (msg.type) {
                 case "connect":
-                    console.log("receive connect event")
                     handler.onConnect(socket, msg.connectionId);
                     break
                 case "disconnect":
-                    // handler.onDisconnect(ws, msg.connectionId);
+                    handler.onDisconnect(socket, msg.connectionId);
                     break
                 case "offer":
-                    // handler.onOffer(ws, msg.data);
+                    handler.onOffer(ws, msg.data);
                     break
                 case "answer":
-                    // handler.onAnswer(ws, msg.data);
+                    handler.onAnswer(ws, msg.data);
                     break
                 case "candidate":
-                    // handler.onCandidate(ws, msg.data);
+                    handler.onCandidate(ws, msg.data);
                     break
                 default:
                     break
