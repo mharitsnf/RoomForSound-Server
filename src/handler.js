@@ -43,7 +43,7 @@ function onConnect(ws, connectionId) {
 
     const connectionIds = getOrCreateConnectionIds(ws);
     connectionIds.add(connectionId);
-    ws.emit("serverConnect", { connectionId: connectionId, polite: polite })
+    ws.send(JSON.stringify({ type: "connect", connectionId: connectionId, polite: polite }))
 }
 
 module.exports = {
