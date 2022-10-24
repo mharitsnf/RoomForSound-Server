@@ -1,16 +1,14 @@
-
-const _ = require("lodash")
 const { Offer } = require("./offer")
 const { Answer } = require("./answer")
 const { Candidate } = require("./candidate")
+
+let isPrivate = false
 
 // [{sessonId:[connectionId,...]}]
 const clients = new Map()
 
 // [{connectionId:[sessionId1, sessionId2]}]
 const connectionPair = new Map()
-
-let isPrivate = false
 
 function getOrCreateConnectionIds(session) {
     let connectionIds = null;
@@ -85,6 +83,7 @@ function onDisconnect(ws, connectionId) {
 }
 
 function onOffer(ws, message) {
+    console.log(clients.has(ws))
     const connectionId = message.connectionId;
     const newOffer = new Offer(message.sdp, Date.now(), false);
 
@@ -159,5 +158,6 @@ module.exports = {
     onConnect: onConnect,
     onDisconnect: onDisconnect,
     onOffer: onOffer,
-    onAnswer: onAnswer
+    onAnswer: onAnswer,
+    onCandidate: onCandidate
 }

@@ -13,13 +13,8 @@ const createWebSocketServer = (server, mode) => {
     ws.on("connection", (socket) => {
         handler.add(socket)
 
-        console.log("Client connected")
-        socket.send(JSON.stringify({ message: "Hello from server! "}))
-
         socket.on("close", () => {
             handler.remove(socket)
-            console.log("Client disconnected")
-            socket.send(JSON.stringify({ message: "Goodbye from server! "}))
         })
 
         socket.on("message", (message, isBinary) => {
@@ -36,13 +31,13 @@ const createWebSocketServer = (server, mode) => {
                     handler.onDisconnect(socket, msg.connectionId);
                     break
                 case "offer":
-                    handler.onOffer(ws, msg.data);
+                    handler.onOffer(socket, msg.data);
                     break
                 case "answer":
-                    handler.onAnswer(ws, msg.data);
+                    handler.onAnswer(socket, msg.data);
                     break
                 case "candidate":
-                    handler.onCandidate(ws, msg.data);
+                    handler.onCandidate(socket, msg.data);
                     break
                 default:
                     break
