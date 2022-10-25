@@ -10,4 +10,4 @@ let expressServer = expressApp.listen(process.env.PORT || port, () => {
 })
 
 // Websocket
-createWebSocketServer(expressServer)
+createWebSocketServer(expressServer, "public")
